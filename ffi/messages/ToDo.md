@@ -1,0 +1,21 @@
+```c
+SignalFfiError* signal_message_backup_key_destroy(
+SignalFfiError* signal_message_backup_key_from_account_entropy_pool(
+SignalFfiError* signal_message_backup_key_from_backup_key_and_backup_id(
+SignalFfiError* signal_message_backup_key_get_aes_key(
+SignalFfiError* signal_message_backup_key_get_hmac_key(
+SignalFfiError* signal_message_backup_validation_outcome_destroy(
+SignalFfiError* signal_message_backup_validation_outcome_get_error_message(
+SignalFfiError* signal_message_backup_validation_outcome_get_unknown_fields(
+SignalFfiError* signal_message_backup_validator_validate(
+SignalFfiError* signal_message_clone(
+SignalFfiError* signal_message_deserialize(
+SignalFfiError* signal_message_destroy(
+SignalFfiError* signal_message_get_body(
+SignalFfiError* signal_message_get_counter(
+SignalFfiError* signal_message_get_message_version(
+SignalFfiError* signal_message_get_pq_ratchet(
+SignalFfiError* signal_message_get_sender_ratchet_key(
+SignalFfiError* signal_message_get_serialized(
+SignalFfiError* signal_message_new(
+```

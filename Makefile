@@ -23,7 +23,7 @@ LIBSIGNAL_FFI_A := deps/libsignal_ffi.a
 
 
 .PHONY: all
-all: clean build
+all: clean test
 
 $(LIBSIGNAL_DIR):
 	@echo "[$(LIBSIGNAL_DIR)] ..."
@@ -55,7 +55,7 @@ build: $(LIBSIGNAL_FFI_A) $(LIBSIGNAL_FFI_H) test
 
 test: $(LIBSIGNAL_FFI_A) $(LIBSIGNAL_FFI_H)
 	@echo "[Testing] ..."
-	$(GO_FLAGS) $(GO_BIN) test -v .
+	$(GO_FLAGS) $(GO_BIN) test -v ./...
 
 clean:
 	@echo "[Cleaning] ..."
