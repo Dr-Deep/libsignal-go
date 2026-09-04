@@ -21,3 +21,11 @@ CGO_ENABLED=1 go test -race ./...
 CGO_ENABLED=1 go run ./cmd/ffi-harness
 ```
 
+
+
+passing Pointers is Okay
+storing Pointers only Go; eleminate all C Pointers
+
+
+
+`valgrind --leak-check=full ./libsignal-go`

@@ -8,7 +8,7 @@ const (
 )
 
 func TestAddress(t *testing.T) {
-	addr, err := NewAddress(test_address, 1)
+	addr, err := NewProtocolAddress(test_address, 1)
 	if err != nil {
 		t.Fatalf("NewAddress(): %v", err)
 	}

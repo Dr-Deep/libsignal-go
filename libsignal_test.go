@@ -3,7 +3,7 @@ package libsignal
 import (
 	"testing"
 
-	_ "github.com/Dr-Deep/libsignal-go/ffi"
+	_ "github.com/Dr-Deep/libsignal-go/signal/ffi"
 )
 
 /*

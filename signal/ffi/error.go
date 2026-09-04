@@ -1,9 +1,10 @@
 package ffi
 
 /*
-#cgo LDFLAGS: -L${SRCDIR}/../deps -lsignal_ffi -ldl -lpthread -lm -lstdc++
-#include "../deps/signal_ffi.h"
-#include "../deps/signal_ffi_testing.h"
+#include "../../deps/signal_ffi.h"
+#include "../../deps/signal_ffi_testing.h"
+#include <stdlib.h>
+#cgo LDFLAGS: -L${SRCDIR}/../../deps -lsignal_ffi -ldl -lpthread -lm -lstdc++
 */
 import "C"
 import (
@@ -137,19 +138,13 @@ func (e *SignalError) Error() string {
 	return fmt.Sprintf("SignalErrorCode: %d", e.Code)
 }
 
-/*
-   ffi/address.go:36:15:
-   cannot use err (variable of type *_Ctype_struct_SignalFfiError) as error value in return statement:
-   *_Ctype_struct_SignalFfiError does not implement error (missing method Error)
-*/
-// SignalFfiErrorRef
 func convertError(signal_err *C.SignalFfiError) error {
 	if signal_err == nil {
 		return nil
 	}
 	defer C.signal_error_free(signal_err)
 
-	signal_err_type := C.signal_error_get_type(signal_err)
+	signal_err_type := C.signal_error_get_type(signal_err) // => uint32_t
 
 	var signal_err_message C.SignalCStringPtr
 	err := C.signal_error_get_message(&signal_err_message, signal_err)
@@ -157,7 +152,9 @@ func convertError(signal_err *C.SignalFfiError) error {
 		C.signal_error_free(err)
 	}
 
-	message := C.GoString((*C.char)(unsafe.Pointer(signal_err_message)))
+	message := CStringToString(
+		(*C.char)(unsafe.Pointer(signal_err_message)),
+	)
 
 	fmt.Printf("\n%#v\n", signal_err_type)
 
@@ -168,5 +165,3 @@ func convertError(signal_err *C.SignalFfiError) error {
 	}
 
 }
-
-//func wrapSignalFFIError(SignalFFIError *C.SignalFfiError, errorType C.uint32_t) error
