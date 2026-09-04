@@ -3,8 +3,7 @@ package ffi
 import "testing"
 
 const (
-	//test_address  = "+49123456789"
-	test_address  = ""
+	test_address  = "+49123456789"
 	test_deviceID = 1
 )
 
@@ -21,6 +20,6 @@ func TestAddress(t *testing.T) {
 	}
 
 	if name != test_address {
-		t.Fatalf("")
+		t.Fatalf("'%s' != '%s'", test_address, name)
 	}
 }

@@ -1,5 +1,5 @@
 NOTES.md
-deps/*
+deps/libsignal*
 libsignal-go
 libsignal-ffi-go
 .codex

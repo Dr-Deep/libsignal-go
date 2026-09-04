@@ -9,8 +9,6 @@ package ffi
 import "C"
 import (
 	"unsafe"
-
-	"github.com/Dr-Deep/libsignal-go/ffi/internal"
 )
 
 type Address struct {
@@ -45,35 +43,80 @@ func NewAddress(addr string, deviceID uint32) (*Address, error) {
 	return &Address{ptr: ptr.raw}, nil
 }
 
-// C.signal_address_clone()
-func (*Address) Clone() SignalError
-
-// C. signal_address_destroy()
-func (*Address) Destroy() SignalError
-
 // C.signal_address_get_name()
 func (addr *Address) Name() (string, error) {
 	var (
-		outptr  C.char
+		out     C.SignalCStringPtr
 		address = C.SignalConstPointerProtocolAddress{raw: addr.ptr}
 	)
 
-	name, err := FfiCallFunc1(
-		outptr,
+	namePtr, err := FfiCallFunc1(
+		&out,
 		address,
-		internal.Signal_address_get_name,
+		Signal_address_get_name,
 	)
 	if err != nil {
 		return "", err
 	}
 
-	//! name oder outptr
-
-	//name := C.GoString(ptr)
-	//C.signal_free_string(ptr)
+	name := C.GoString(
+		(*C.char)(unsafe.Pointer(out)),
+	)
+	_ = namePtr
 
 	return name, nil
 }
 
 // C.signal_address_get_device_id()
-func (*Address) GetDeviceID() (uint32, SignalError)
+func (addr *Address) GetDeviceID() (uint32, error) {
+	var (
+		out     C.uint32_t
+		address = C.SignalConstPointerProtocolAddress{raw: addr.ptr}
+	)
+
+	deviceIDPtr, err := FfiCallFunc1(
+		&out,
+		address,
+		Signal_address_get_device_id,
+	)
+	if err != nil {
+		return 0, err
+	}
+
+	return uint32(*deviceIDPtr), nil
+}
+
+// C.signal_address_clone()
+func (addr *Address) Clone() (*Address, error) {
+	var (
+		out     C.SignalMutPointerProtocolAddress
+		address = C.SignalConstPointerProtocolAddress{raw: addr.ptr}
+	)
+
+	_, err := FfiCallFunc1(
+		&out,
+		address,
+		Signal_address_clone,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &Address{ptr: out.raw}, nil
+}
+
+// C.signal_address_destroy()
+func (addr *Address) Destroy() error {
+	if addr.ptr == nil {
+		return nil
+	}
+
+	var address = C.SignalMutPointerProtocolAddress{raw: addr.ptr}
+
+	err := convertError(
+		Signal_address_destroy(address),
+	)
+
+	addr.ptr = nil
+	return err
+}
