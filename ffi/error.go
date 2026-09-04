@@ -11,6 +11,24 @@ import (
 	"unsafe"
 )
 
+/*
+void signal_error_free(
+SignalFfiError* signal_error_get_address(
+SignalFfiError* signal_error_get_invalid_protocol_address(
+SignalFfiError* signal_error_get_message(
+SignalFfiError* signal_error_get_mismatched_device_errors(
+SignalFfiError* signal_error_get_our_fingerprint_version(
+SignalFfiError* signal_error_get_rate_limit_challenge(
+SignalFfiError* signal_error_get_registration_error_not_deliverable(
+SignalFfiError* signal_error_get_registration_lock(
+SignalFfiError* signal_error_get_retry_after_seconds(
+SignalFfiError* signal_error_get_their_fingerprint_version(
+SignalFfiError* signal_error_get_tries_remaining(
+uint32_t signal_error_get_type(
+SignalFfiError* signal_error_get_unknown_fields(
+SignalFfiError* signal_error_get_uuid(
+*/
+
 type SignalErrorCode int
 
 const (
@@ -152,21 +170,3 @@ func convertError(signal_err *C.SignalFfiError) error {
 }
 
 //func wrapSignalFFIError(SignalFFIError *C.SignalFfiError, errorType C.uint32_t) error
-
-/*
-void signal_error_free(
-SignalFfiError* signal_error_get_address(
-SignalFfiError* signal_error_get_invalid_protocol_address(
-SignalFfiError* signal_error_get_message(
-SignalFfiError* signal_error_get_mismatched_device_errors(
-SignalFfiError* signal_error_get_our_fingerprint_version(
-SignalFfiError* signal_error_get_rate_limit_challenge(
-SignalFfiError* signal_error_get_registration_error_not_deliverable(
-SignalFfiError* signal_error_get_registration_lock(
-SignalFfiError* signal_error_get_retry_after_seconds(
-SignalFfiError* signal_error_get_their_fingerprint_version(
-SignalFfiError* signal_error_get_tries_remaining(
-uint32_t signal_error_get_type(
-SignalFfiError* signal_error_get_unknown_fields(
-SignalFfiError* signal_error_get_uuid(
-*/

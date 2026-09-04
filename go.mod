@@ -1,3 +1,3 @@
 module github.com/Dr-Deep/libsignal-go
 
-go 1.24
+go 1.25

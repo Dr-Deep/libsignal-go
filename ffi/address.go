@@ -9,6 +9,8 @@ package ffi
 import "C"
 import (
 	"unsafe"
+
+	"github.com/Dr-Deep/libsignal-go/ffi/internal"
 )
 
 type Address struct {
@@ -52,25 +54,23 @@ func (*Address) Destroy() SignalError
 // C.signal_address_get_name()
 func (addr *Address) Name() (string, error) {
 	var (
-		caddrptr = C.SignalConstPointerProtocolAddress{raw: addr.ptr}
-		ptr      *C.char
+		outptr  C.char
+		address = C.SignalConstPointerProtocolAddress{raw: addr.ptr}
 	)
 
-	err := convertError(
-		// Call
-		C.signal_address_get_name(
-			&ptr,
-			caddrptr,
-		),
+	name, err := FfiCallFunc1(
+		outptr,
+		address,
+		internal.Signal_address_get_name,
 	)
-
 	if err != nil {
 		return "", err
 	}
 
-	//
-	name := C.GoString(ptr)
-	C.signal_free_string(ptr)
+	//! name oder outptr
+
+	//name := C.GoString(ptr)
+	//C.signal_free_string(ptr)
 
 	return name, nil
 }
