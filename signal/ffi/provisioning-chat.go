@@ -24,11 +24,11 @@ func (chat *ProvisioningChatConnection) MutPointer() C.SignalMutPointerProvision
 	return C.SignalMutPointerProvisioningChatConnection{raw: chat.ptr}
 }
 
-func (chat *AuthenticatedChatConnection) ConstPointer() C.SignalConstPointerProvisioningChatConnection {
+func (chat *ProvisioningChatConnection) ConstPointer() C.SignalConstPointerProvisioningChatConnection {
 	return C.SignalConstPointerProvisioningChatConnection{raw: chat.ptr}
 }
 
-func (chat *AuthenticatedChatConnection) Destroy() {
+func (chat *ProvisioningChatConnection) Destroy() {
 	if chat.ptr != nil {
 		C.signal_provisioning_chat_connection_destroy(
 			chat.MutPointer(),
