@@ -9,79 +9,112 @@ package ffi
 import "C"
 
 /*
-SignalFfiError* signal_fake_chat_connection_destroy(
-SignalFfiError* signal_testing_chat_connect_error_convert(
-SignalFfiError* signal_testing_fake_chat_connection_create(
-SignalFfiError* signal_testing_fake_chat_connection_create_provisioning(
-SignalFfiError* signal_testing_fake_chat_connection_take_authenticated_chat(
-SignalFfiError* signal_testing_fake_chat_connection_take_provisioning_chat(
-SignalFfiError* signal_testing_fake_chat_connection_take_remote(
-SignalFfiError* signal_testing_fake_chat_connection_take_unauthenticated_chat(
-
-SignalFfiError* signal_authenticated_chat_connection_clear_push_token(
-SignalFfiError* signal_authenticated_chat_connection_clear_registration_lock(
-SignalFfiError* signal_authenticated_chat_connection_confirm_username(
-SignalFfiError* signal_authenticated_chat_connection_connect(
-SignalFfiError* signal_authenticated_chat_connection_delete_username_hash(
-SignalFfiError* signal_authenticated_chat_connection_delete_username_link(
-SignalFfiError* signal_authenticated_chat_connection_destroy(
-SignalFfiError* signal_authenticated_chat_connection_disconnect(
-SignalFfiError* signal_authenticated_chat_connection_get_devices(
-SignalFfiError* signal_authenticated_chat_connection_get_upload_form(
-SignalFfiError* signal_authenticated_chat_connection_info(
-SignalFfiError* signal_authenticated_chat_connection_init_listener(
-SignalFfiError* signal_authenticated_chat_connection_preconnect(
-SignalFfiError* signal_authenticated_chat_connection_redeem_backup_receipt(
-SignalFfiError* signal_authenticated_chat_connection_remove_device(
-SignalFfiError* signal_authenticated_chat_connection_reserve_username_hash(
-SignalFfiError* signal_authenticated_chat_connection_send(
-SignalFfiError* signal_authenticated_chat_connection_send_message(
-SignalFfiError* signal_authenticated_chat_connection_send_raw_grpc(
-SignalFfiError* signal_authenticated_chat_connection_send_sync_message(
-SignalFfiError* signal_authenticated_chat_connection_set_device_name(
-SignalFfiError* signal_authenticated_chat_connection_set_discoverable_by_phone_number(
-SignalFfiError* signal_authenticated_chat_connection_set_push_token_apns(
-SignalFfiError* signal_authenticated_chat_connection_set_registration_lock(
-SignalFfiError* signal_authenticated_chat_connection_set_registration_recovery_password(
-SignalFfiError* signal_authenticated_chat_connection_set_username_link(
-
 SignalFfiError* signal_chat_connection_info_description(
 SignalFfiError* signal_chat_connection_info_destroy(
 SignalFfiError* signal_chat_connection_info_ip_version(
 SignalFfiError* signal_chat_connection_info_local_port(
-
-SignalFfiError* signal_provisioning_chat_connection_connect(
-SignalFfiError* signal_provisioning_chat_connection_destroy(
-SignalFfiError* signal_provisioning_chat_connection_disconnect(
-SignalFfiError* signal_provisioning_chat_connection_info(
-SignalFfiError* signal_provisioning_chat_connection_init_listener(
-
-SignalFfiError* signal_unauthenticated_chat_connection_account_exists(
-SignalFfiError* signal_unauthenticated_chat_connection_backup_copy_media(
-SignalFfiError* signal_unauthenticated_chat_connection_backup_delete_all(
-SignalFfiError* signal_unauthenticated_chat_connection_backup_delete_media(
-SignalFfiError* signal_unauthenticated_chat_connection_backup_get_cdn_credentials(
-SignalFfiError* signal_unauthenticated_chat_connection_backup_get_media_backup_info(
-SignalFfiError* signal_unauthenticated_chat_connection_backup_get_media_upload_form(
-SignalFfiError* signal_unauthenticated_chat_connection_backup_get_message_backup_info(
-SignalFfiError* signal_unauthenticated_chat_connection_backup_get_svrb_credentials(
-SignalFfiError* signal_unauthenticated_chat_connection_backup_get_upload_form(
-SignalFfiError* signal_unauthenticated_chat_connection_backup_list_media(
-SignalFfiError* signal_unauthenticated_chat_connection_backup_refresh(
-SignalFfiError* signal_unauthenticated_chat_connection_backup_set_public_key(
-SignalFfiError* signal_unauthenticated_chat_connection_connect(
-SignalFfiError* signal_unauthenticated_chat_connection_destroy(
-SignalFfiError* signal_unauthenticated_chat_connection_disconnect(
-SignalFfiError* signal_unauthenticated_chat_connection_get_pre_keys_access_key_auth(
-SignalFfiError* signal_unauthenticated_chat_connection_get_pre_keys_group_auth(
-SignalFfiError* signal_unauthenticated_chat_connection_get_pre_keys_unrestricted_auth(
-SignalFfiError* signal_unauthenticated_chat_connection_info(
-SignalFfiError* signal_unauthenticated_chat_connection_init_listener(
-SignalFfiError* signal_unauthenticated_chat_connection_look_up_username_hash(
-SignalFfiError* signal_unauthenticated_chat_connection_look_up_username_link(
-SignalFfiError* signal_unauthenticated_chat_connection_send(
-SignalFfiError* signal_unauthenticated_chat_connection_send_message(
-SignalFfiError* signal_unauthenticated_chat_connection_send_multi_recipient_message(
-SignalFfiError* signal_unauthenticated_chat_connection_send_raw_grpc(
-SignalFfiError* signal_unauthenticated_chat_connection_submit_call_quality_survey(
 */
+
+type IpType uint8
+
+const (
+	IpTypeUnknown IpType = 0
+	IpTypeV4      IpType = 1
+	IpTypeV6      IpType = 2
+)
+
+type ChatConnectionInfo struct {
+	ptr *C.SignalChatConnectionInfo
+}
+
+func (info *ChatConnectionInfo) MutPointer() C.SignalMutPointerChatConnectionInfo {
+	return C.SignalMutPointerChatConnectionInfo{raw: info.ptr}
+}
+
+func (info *ChatConnectionInfo) ConstPointer() C.SignalConstPointerChatConnectionInfo {
+	return C.SignalConstPointerChatConnectionInfo{raw: info.ptr}
+}
+
+// C.signal_chat_connection_info_description()
+func (info *ChatConnectionInfo) Description() (string, error) {
+	if info.ptr == nil {
+		return "", nil
+	}
+
+	var (
+		out C.SignalCStringPtr
+	)
+
+	err := convertError(
+		C.signal_chat_connection_info_description(
+			&out,
+			info.ConstPointer(),
+		),
+	)
+
+	if err != nil {
+		return "", err
+	}
+
+	descr := SignalCStringPtrToString(out)
+	C.signal_free_string(out)
+	return descr, nil
+}
+
+// C.signal_chat_connection_info_ip_version()
+func (info *ChatConnectionInfo) IpVersion() (IpType, error) {
+	if info.ptr == nil {
+		return IpTypeUnknown, nil
+	}
+
+	var (
+		out C.uint8_t
+	)
+
+	err := convertError(
+		C.signal_chat_connection_info_ip_version(
+			&out,
+			info.ConstPointer(),
+		),
+	)
+
+	if err != nil {
+		return IpTypeUnknown, err
+	}
+
+	return IpType(out), nil
+}
+
+// C.signal_chat_connection_info_local_port()
+func (info *ChatConnectionInfo) LocalPort() (uint16, error) {
+	if info.ptr == nil {
+		return 0, nil
+	}
+
+	var (
+		out C.uint16_t
+	)
+
+	err := convertError(
+		C.signal_chat_connection_info_local_port(
+			&out,
+			info.ConstPointer(),
+		),
+	)
+
+	if err != nil {
+		return 0, err
+	}
+
+	return uint16(out), nil
+}
+
+// C.signal_chat_connection_info_destroy()
+func (info *ChatConnectionInfo) Destroy() {
+	if info.ptr != nil {
+		C.signal_chat_connection_info_destroy(
+			info.MutPointer(),
+		)
+		info.ptr = nil
+	}
+}
