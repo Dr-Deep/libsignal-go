@@ -20,6 +20,15 @@ SignalFfiError* signal_connection_manager_set_censorship_circumvention_enabled(
 SignalFfiError* signal_connection_manager_set_invalid_proxy(
 SignalFfiError* signal_connection_manager_set_proxy(
 SignalFfiError* signal_connection_manager_set_remote_config(
+
+SignalFfiError* signal_connection_proxy_config_clone(
+SignalFfiError* signal_connection_proxy_config_destroy(
+SignalFfiError* signal_connection_proxy_config_new(
+
+SignalFfiError* signal_bridged_string_map_clone(
+SignalFfiError* signal_bridged_string_map_destroy(
+SignalFfiError* signal_bridged_string_map_insert(
+SignalFfiError* signal_bridged_string_map_new(
 */
 
 type ConnectionManager struct {
@@ -50,7 +59,7 @@ func NewConnectionManager(environment uint8, userAgent string, remoteConfig any,
 	defer C.free(unsafe.Pointer(c_userAgent))
 
 	if remoteConfig != nil {
-		//c_remoteConfig = C.SignalMutPointerBridgedStringMap{raw: remoteConfig.ptr}
+		//c_remoteConfig = remoteConfig.MutPointer()
 	}
 
 	err := convertError(
@@ -70,11 +79,55 @@ func NewConnectionManager(environment uint8, userAgent string, remoteConfig any,
 
 }
 
-func (ConnMgr *ConnectionManager) SetRemoteConfig()
-func (ConnMgr *ConnectionManager) SetProxy()
-func (ConnMgr *ConnectionManager) SetInvalidProxy()
-func (ConnMgr *ConnectionManager) SetCensorshipCircumventionEnabled()
-func (ConnMgr *ConnectionManager) OnNetworkChange()
+// C.signal_connection_manager_set_remote_config()
+func (connMgr *ConnectionManager) SetRemoteConfig()
+func (connMgr *ConnectionManager) SetProxy()
+
+// C.signal_connection_manager_set_invalid_proxy()
+func (connMgr *ConnectionManager) SetInvalidProxy() error {
+	if connMgr.ptr == nil {
+		return nil
+	}
+
+	err := convertError(
+		C.signal_connection_manager_set_invalid_proxy(
+			connMgr.ConstPointer(),
+		),
+	)
+
+	return err
+}
+
+// C.signal_connection_manager_set_censorship_circumvention_enabled()
+func (connMgr *ConnectionManager) SetCensorshipCircumventionEnabled(value bool) error {
+	if connMgr.ptr == nil {
+		return nil
+	}
+
+	err := convertError(
+		C.signal_connection_manager_set_censorship_circumvention_enabled(
+			connMgr.ConstPointer(),
+			C.bool(value),
+		),
+	)
+
+	return err
+}
+
+// C.signal_connection_manager_on_network_change()
+func (connMgr *ConnectionManager) OnNetworkChange() error {
+	if connMgr.ptr == nil {
+		return nil
+	}
+
+	err := convertError(
+		C.signal_connection_manager_on_network_change(
+			connMgr.ConstPointer(),
+		),
+	)
+
+	return err
+}
 
 func (connMgr *ConnectionManager) Destroy() {
 	if connMgr.ptr != nil {
@@ -85,4 +138,17 @@ func (connMgr *ConnectionManager) Destroy() {
 	}
 }
 
-func (connMgr *ConnectionManager) ClearProxy()
+// C.signal_connection_manager_clear_proxy()
+func (connMgr *ConnectionManager) ClearProxy() error {
+	if connMgr.ptr == nil {
+		return nil
+	}
+
+	err := convertError(
+		C.signal_connection_manager_clear_proxy(
+			connMgr.ConstPointer(),
+		),
+	)
+
+	return err
+}
