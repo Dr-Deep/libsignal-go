@@ -3,6 +3,7 @@ package libsignal
 import (
 	"testing"
 
+	"github.com/Dr-Deep/libsignal-go/signal/ffi"
 	_ "github.com/Dr-Deep/libsignal-go/signal/ffi"
 )
 
@@ -15,5 +16,10 @@ import (
 */
 
 func Test(t *testing.T) {
-	t.Logf("test...\n")
+
+	ffi.NewConnectionManager()
+	ffi.NewTokioAsyncContext()
+
+	ffi.ConnectUnauthenticatedChat
+	ffi.ConnectAuthenticatedChat
 }
