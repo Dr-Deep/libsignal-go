@@ -26,6 +26,14 @@ type ConnectionManager struct {
 	ptr *C.SignalConnectionManager
 }
 
+func (connMgr *ConnectionManager) MutPointer() C.SignalMutPointerConnectionManager {
+	return C.SignalMutPointerConnectionManager{raw: connMgr.ptr}
+}
+
+func (connMgr *ConnectionManager) ConstPointer() C.SignalConstPointerConnectionManager {
+	return C.SignalConstPointerConnectionManager{raw: connMgr.ptr}
+}
+
 /*
 environment: 0 = production, 1 = staging (check SignalNet.Environment)
 build_variant: usually 0 for production builds
@@ -68,13 +76,13 @@ func (ConnMgr *ConnectionManager) SetInvalidProxy()
 func (ConnMgr *ConnectionManager) SetCensorshipCircumventionEnabled()
 func (ConnMgr *ConnectionManager) OnNetworkChange()
 
-func (ConnMgr *ConnectionManager) Destroy() {
-	if ConnMgr.ptr != nil {
+func (connMgr *ConnectionManager) Destroy() {
+	if connMgr.ptr != nil {
 		C.signal_connection_manager_destroy(
-			C.SignalMutPointerConnectionManager{raw: ConnMgr.ptr},
+			connMgr.MutPointer(),
 		)
-		ConnMgr.ptr = nil
+		connMgr.ptr = nil
 	}
 }
 
-func (ConnMgr *ConnectionManager) ClearProxy()
+func (connMgr *ConnectionManager) ClearProxy()

@@ -7,9 +7,6 @@ package ffi
 #cgo LDFLAGS: -L${SRCDIR}/../../deps -lsignal_ffi -ldl -lpthread -lm -lstdc++
 */
 import "C"
-import (
-	"unsafe"
-)
 
 /*
 SignalFfiError* signal_fake_chat_connection_destroy(

@@ -8,10 +8,6 @@ package ffi
 */
 import "C"
 
-type TokioAsyncContext struct {
-	ptr *TokioAsyncContext
-}
-
 /*
 SignalFfiError* signal_testing_tokio_async_context_future_success_bytes(
 SignalFfiError* signal_testing_tokio_async_context_new_single_threaded(
@@ -21,11 +17,58 @@ SignalFfiError* signal_tokio_async_context_destroy(
 SignalFfiError* signal_tokio_async_context_new(
 */
 
-// C.signal_tokio_async_context_new
-func (ctx *TokioAsyncContext) NewContext()
+type TokioAsyncContext struct {
+	ptr *C.SignalTokioAsyncContext
+}
 
-// C.signal_tokio_async_context_destroy()
-func (ctx *TokioAsyncContext) DestroyContext()
+func (ctx *TokioAsyncContext) MutPointer() C.SignalMutPointerTokioAsyncContext {
+	return C.SignalMutPointerTokioAsyncContext{raw: ctx.ptr}
+}
+
+func (ctx *TokioAsyncContext) ConstPointer() C.SignalConstPointerTokioAsyncContext {
+	return C.SignalConstPointerTokioAsyncContext{raw: ctx.ptr}
+}
 
 // C.signal_tokio_async_context_new()
-func (ctx *TokioAsyncContext) CancelContext()
+func NewTokioAsyncContext() (*TokioAsyncContext, error) {
+	var (
+		out C.SignalMutPointerTokioAsyncContext
+	)
+
+	err := convertError(
+		C.signal_tokio_async_context_new(
+			&out,
+		),
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &TokioAsyncContext{ptr: out.raw}, nil
+}
+
+// C.signal_tokio_async_context_cancel()
+func (ctx *TokioAsyncContext) Cancel(cancellationID uint64) error {
+	if ctx.ptr == nil {
+		return nil
+	}
+
+	err := convertError(
+		C.signal_tokio_async_context_cancel(
+			ctx.ConstPointer(),
+			C.uint64_t(cancellationID),
+		),
+	)
+
+	return err
+}
+
+// C.signal_tokio_async_context_destroy()
+func (ctx *TokioAsyncContext) Destroy() {
+	if ctx.ptr != nil {
+		C.signal_tokio_async_context_destroy(
+			ctx.MutPointer(),
+		)
+		ctx.ptr = nil
+	}
+}

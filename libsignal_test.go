@@ -16,10 +16,29 @@ import (
 */
 
 func Test(t *testing.T) {
-
-	ffi.NewConnectionManager()
-	ffi.NewTokioAsyncContext()
+	var (
+		connmgr = getConnMgr()
+		ctx     = getTokioAsyncContext()
+	)
 
 	ffi.ConnectUnauthenticatedChat
 	ffi.ConnectAuthenticatedChat
+}
+
+func getConnMgr() *ffi.ConnectionManager {
+	connmgr, err := ffi.NewConnectionManager()
+	if err != nil {
+		panic(err)
+	}
+
+	return connmgr
+}
+
+func getTokioAsyncContext() *ffi.TokioAsyncContext {
+	ctx, err := ffi.NewTokioAsyncContext()
+	if err != nil {
+		panic(err)
+	}
+
+	return ctx
 }

@@ -15,6 +15,14 @@ type ProtocolAddress struct {
 	ptr *C.SignalProtocolAddress
 }
 
+func (addr *ProtocolAddress) MutPointer() C.SignalMutPointerProtocolAddress {
+	return C.SignalMutPointerProtocolAddress{raw: addr.ptr}
+}
+
+func (addr *ProtocolAddress) ConstPointer() C.SignalConstPointerProtocolAddress {
+	return C.SignalConstPointerProtocolAddress{raw: addr.ptr}
+}
+
 func NewProtocolAddress(name string, deviceID uint32) (*ProtocolAddress, error) {
 	var (
 		c_name     = StringToCString(name)
@@ -45,7 +53,7 @@ func (addr *ProtocolAddress) Name() (string, error) {
 	err := convertError(
 		C.signal_address_get_name(
 			&out,
-			C.SignalConstPointerProtocolAddress{raw: addr.ptr},
+			addr.ConstPointer(),
 		),
 	)
 	if err != nil {
@@ -66,7 +74,7 @@ func (addr *ProtocolAddress) DeviceID() (uint32, error) {
 	err := convertError(
 		C.signal_address_get_device_id(
 			&out,
-			C.SignalConstPointerProtocolAddress{raw: addr.ptr},
+			addr.ConstPointer(),
 		),
 	)
 	if err != nil {
@@ -79,7 +87,7 @@ func (addr *ProtocolAddress) DeviceID() (uint32, error) {
 func (addr *ProtocolAddress) Destroy() {
 	if addr.ptr != nil {
 		C.signal_address_destroy(
-			C.SignalMutPointerProtocolAddress{raw: addr.ptr},
+			addr.MutPointer(),
 		)
 		addr.ptr = nil
 	}
