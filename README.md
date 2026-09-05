@@ -28,4 +28,6 @@ storing Pointers only Go; eleminate all C Pointers
 
 
 
-`valgrind --leak-check=full ./libsignal-go`
+`valgrind --leak-check=full ./libsignal-go` 
+
+`CGO_ENABLED=1 go test -race -v ./signal/ffi -run TestTokio`
