@@ -36,3 +36,24 @@ SignalFfiError* signal_authenticated_chat_connection_set_registration_lock(
 SignalFfiError* signal_authenticated_chat_connection_set_registration_recovery_password(
 SignalFfiError* signal_authenticated_chat_connection_set_username_link(
 */
+
+type AuthenticatedChatConnection struct {
+	ptr *C.SignalAuthenticatedChatConnection
+}
+
+func (chat *AuthenticatedChatConnection) MutPointer() C.SignalMutPointerAuthenticatedChatConnection {
+	return C.SignalMutPointerAuthenticatedChatConnection{raw: chat.ptr}
+}
+
+func (chat *AuthenticatedChatConnection) ConstPointer() C.SignalConstPointerAuthenticatedChatConnection {
+	return C.SignalConstPointerAuthenticatedChatConnection{raw: chat.ptr}
+}
+
+func (chat *AuthenticatedChatConnection) Destroy() {
+	if chat.ptr != nil {
+		C.signal_authenticated_chat_connection_destroy(
+			chat.MutPointer(),
+		)
+		chat.ptr = nil
+	}
+}

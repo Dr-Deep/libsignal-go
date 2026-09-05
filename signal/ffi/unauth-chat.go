@@ -38,3 +38,24 @@ SignalFfiError* signal_unauthenticated_chat_connection_send_multi_recipient_mess
 SignalFfiError* signal_unauthenticated_chat_connection_send_raw_grpc(
 SignalFfiError* signal_unauthenticated_chat_connection_submit_call_quality_survey(
 */
+
+type UnauthenticatedChatConnection struct {
+	ptr *C.SignalUnauthenticatedChatConnection
+}
+
+func (chat *UnauthenticatedChatConnection) MutPointer() C.SignalMutPointerUnauthenticatedChatConnection {
+	return C.SignalMutPointerUnauthenticatedChatConnection{raw: chat.ptr}
+}
+
+func (chat *UnauthenticatedChatConnection) ConstPointer() C.SignalConstPointerUnauthenticatedChatConnection {
+	return C.SignalConstPointerUnauthenticatedChatConnection{raw: chat.ptr}
+}
+
+func (chat *UnauthenticatedChatConnection) Destroy() {
+	if chat.ptr != nil {
+		C.signal_unauthenticated_chat_connection_destroy(
+			chat.MutPointer(),
+		)
+		chat.ptr = nil
+	}
+}
