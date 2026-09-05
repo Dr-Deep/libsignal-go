@@ -80,8 +80,53 @@ func NewConnectionManager(environment uint8, userAgent string, remoteConfig any,
 }
 
 // C.signal_connection_manager_set_remote_config()
-func (connMgr *ConnectionManager) SetRemoteConfig()
-func (connMgr *ConnectionManager) SetProxy()
+func (connMgr *ConnectionManager) SetRemoteConfig(remoteCfg *RemoteConfigMap, buildVariant uint8) error {
+	if connMgr.ptr == nil {
+		return nil
+	}
+
+	var (
+		c_remoteCfg    C.SignalMutPointerBridgedStringMap
+		c_buildVariant = C.uint8_t(buildVariant)
+	)
+	if remoteCfg != nil {
+		c_remoteCfg = remoteCfg.MutPointer()
+	}
+
+	err := convertError(
+		C.signal_connection_manager_set_remote_config(
+			connMgr.ConstPointer(),
+			c_remoteCfg,
+			c_buildVariant,
+		),
+	)
+
+	return err
+}
+
+// C.signal_connection_manager_set_proxy()
+func (connMgr *ConnectionManager) SetProxy(proxyCfg *ConnectionProxyConfig) error {
+	if connMgr.ptr == nil {
+		return nil
+	}
+
+	if proxyCfg == nil {
+		return convertError(
+			C.signal_connection_manager_set_invalid_proxy(
+				connMgr.ConstPointer(),
+			),
+		)
+	}
+
+	err := convertError(
+		C.signal_connection_manager_set_proxy(
+			connMgr.ConstPointer(),
+			proxyCfg.ConstPointer(),
+		),
+	)
+
+	return err
+}
 
 // C.signal_connection_manager_set_invalid_proxy()
 func (connMgr *ConnectionManager) SetInvalidProxy() error {
@@ -129,6 +174,7 @@ func (connMgr *ConnectionManager) OnNetworkChange() error {
 	return err
 }
 
+// C.signal_connection_manager_destroy()
 func (connMgr *ConnectionManager) Destroy() {
 	if connMgr.ptr != nil {
 		C.signal_connection_manager_destroy(
