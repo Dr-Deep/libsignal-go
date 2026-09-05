@@ -8,7 +8,18 @@ package ffi
 */
 import "C"
 
-type TokioAsyncContext struct{}
+type TokioAsyncContext struct {
+	ptr *TokioAsyncContext
+}
+
+/*
+SignalFfiError* signal_testing_tokio_async_context_future_success_bytes(
+SignalFfiError* signal_testing_tokio_async_context_new_single_threaded(
+SignalFfiError* signal_testing_tokio_async_future(
+SignalFfiError* signal_tokio_async_context_cancel(
+SignalFfiError* signal_tokio_async_context_destroy(
+SignalFfiError* signal_tokio_async_context_new(
+*/
 
 // C.signal_tokio_async_context_new
 func (ctx *TokioAsyncContext) NewContext()
