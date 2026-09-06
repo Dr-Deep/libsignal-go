@@ -126,16 +126,15 @@ const (
 type SignalError struct {
 	Code    SignalErrorCode
 	Message string
-	ptr     *C.SignalFfiError
 }
 
 func (e *SignalError) Error() string {
 	if e.Message != "" {
 		//! print error message
-		return fmt.Sprintf("%#v", e)
+		return fmt.Sprintf("SignalError: (%d): %s", e.Code, e.Message)
 	}
 
-	return fmt.Sprintf("SignalErrorCode: %d", e.Code)
+	return fmt.Sprintf("SignalError: (%d)", e.Code)
 }
 
 func convertError(signal_err *C.SignalFfiError) error {
@@ -144,23 +143,20 @@ func convertError(signal_err *C.SignalFfiError) error {
 	}
 	defer C.signal_error_free(signal_err)
 
-	signal_err_type := C.signal_error_get_type(signal_err) // => uint32_t
+	var (
+		err_code = SignalErrorCode(
+			C.signal_error_get_type(signal_err),
+		)
+		err_message C.SignalCStringPtr
+	)
 
-	var signal_err_message C.SignalCStringPtr
-	err := C.signal_error_get_message(&signal_err_message, signal_err)
-	if err != nil {
+	// signal_error_get_message()
+	if err := C.signal_error_get_message(&err_message, signal_err); err != nil {
 		C.signal_error_free(err)
 	}
 
-	message := CStringToString(
-		(*C.char)(unsafe.Pointer(signal_err_message)),
-	)
-
-	fmt.Printf("\n%#v\n", signal_err_type)
-
 	return &SignalError{
-		//Code:
-		Message: message,
-		ptr:     signal_err,
+		Code:    err_code,
+		Message: SignalCStringPtrToString(err_message),
 	}
 }

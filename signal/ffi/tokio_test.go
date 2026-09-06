@@ -9,7 +9,13 @@ const (
 	count = 32
 )
 
-// race conditions?
+/*
+race conditions?
+? CGO_ENABLED=1 go test -race ./...
+
+`valgrind --leak-check=full ./libsignal-go`
+`CGO_ENABLED=1 go test -race -v ./signal/ffi -run TestTokio`
+*/
 func TestTokio(t *testing.T) {
 	var (
 		ctx = context.Background()

@@ -61,7 +61,7 @@ func (m *RemoteConfigMap) Insert(key, value string) error {
 		c_value = StringToCString(value)
 	)
 	defer C.free(unsafe.Pointer(c_key))
-	defer C.free(unsafe.Pointer(&c_value))
+	defer C.free(unsafe.Pointer(c_value))
 
 	err := convertError(
 		C.signal_bridged_string_map_insert(

@@ -5,29 +5,17 @@ milestone provides ownership-safe error handling, a Tokio runtime handle, and
 Signal service-ID conversion. It aims to implement account provisioning,
 message transport, or encryption stores.
 
-## FFI harness
-
-Requirements are Linux, CGO, a C toolchain, and the checked-in
-`deps/libsignal_ffi.a` built for the current architecture.
-
-If the archive was produced on another operating system, rebuild it locally:
-
-```sh
-make -B deps/libsignal_ffi.a
-```
-
-```sh
-CGO_ENABLED=1 go test -race ./...
-CGO_ENABLED=1 go run ./cmd/ffi-harness
-```
-
-
 
 passing Pointers is Okay
 storing Pointers only Go; eleminate all C Pointers
 
 
-
-`valgrind --leak-check=full ./libsignal-go` 
-
-`CGO_ENABLED=1 go test -race -v ./signal/ffi -run TestTokio`
+$(GO_FLAGS) $(GO_BIN) test -c -o /tmp/libsignal-go.test ./signal/ffi
+	@echo "[Valgrind] running..."
+	valgrind \
+		--leak-check=full \
+		--show-leak-kinds=all \
+		--track-origins=yes \
+		--error-exitcode=1 \
+		--suppressions=valgrind.supp \
+		/tmp/libsignal-go.test -test.v -test.run TestTokio
