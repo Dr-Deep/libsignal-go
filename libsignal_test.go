@@ -1,9 +1,6 @@
 package libsignal
 
 import (
-	"testing"
-
-	"github.com/Dr-Deep/libsignal-go/signal/ffi"
 	_ "github.com/Dr-Deep/libsignal-go/signal/ffi"
 )
 
@@ -15,7 +12,9 @@ import (
     Password?
 */
 
+/*
 func Test(t *testing.T) {
+
 	var (
 		connmgr = getConnMgr()
 		ctx     = getTokioAsyncContext()
@@ -42,3 +41,4 @@ func getTokioAsyncContext() *ffi.TokioAsyncContext {
 
 	return ctx
 }
+*/

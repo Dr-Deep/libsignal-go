@@ -20,15 +20,6 @@ SignalFfiError* signal_connection_manager_set_censorship_circumvention_enabled(
 SignalFfiError* signal_connection_manager_set_invalid_proxy(
 SignalFfiError* signal_connection_manager_set_proxy(
 SignalFfiError* signal_connection_manager_set_remote_config(
-
-SignalFfiError* signal_connection_proxy_config_clone(
-SignalFfiError* signal_connection_proxy_config_destroy(
-SignalFfiError* signal_connection_proxy_config_new(
-
-SignalFfiError* signal_bridged_string_map_clone(
-SignalFfiError* signal_bridged_string_map_destroy(
-SignalFfiError* signal_bridged_string_map_insert(
-SignalFfiError* signal_bridged_string_map_new(
 */
 
 type ConnectionManager struct {

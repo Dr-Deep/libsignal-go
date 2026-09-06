@@ -163,5 +163,4 @@ func convertError(signal_err *C.SignalFfiError) error {
 		Message: message,
 		ptr:     signal_err,
 	}
-
 }

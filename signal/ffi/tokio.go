@@ -9,9 +9,6 @@ package ffi
 import "C"
 
 /*
-SignalFfiError* signal_testing_tokio_async_context_future_success_bytes(
-SignalFfiError* signal_testing_tokio_async_context_new_single_threaded(
-SignalFfiError* signal_testing_tokio_async_future(
 SignalFfiError* signal_tokio_async_context_cancel(
 SignalFfiError* signal_tokio_async_context_destroy(
 SignalFfiError* signal_tokio_async_context_new(

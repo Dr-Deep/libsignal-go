@@ -1,26 +1,22 @@
 .POSIX:
 
-
-# cargo, go, cbindgen
-
-CARGO_BIN := cargo
+# rust version = nightly-2026-07-16
+CARGO_BIN := /usr/local/bin/cargo
 CARGO_RUSTFLAGS := -Ctarget-feature=-crt-static
 
-CBINDGEN_BIN := ~/.cargo/bin/cbindgen
-CBINDGEN_CFG := cbindgen.toml
+RUSTC_BIN := /usr/local/bin/rustc
 
 GO_BIN := go
 GO_FLAGS := CGO_ENABLED=1
 
 LIBSIGNAL_DIR := deps/libsignal
 LIBSIGNAL_VERSION := v0.101.2
+LIBSIGNAL_FEATURES := libsignal-bridge-testing
 LIBSIGNAL_FFI_CBINDGEN := libsignal/rust/bridge/ffi/cbindgen.toml
 LIBSIGNAL_FFI_H := deps/signal_ffi.h
 LIBSIGNAL_FFI_A := deps/libsignal_ffi.a
 
-# rust version = nightly-2026-07-16
 # protoc?
-
 
 .PHONY: all
 all: clean test
@@ -34,18 +30,13 @@ $(LIBSIGNAL_DIR):
 #cargo +${{ matrix.toolchain }} build --workspace --features libsignal-ffi/signal-media --verbose --keep-going
 $(LIBSIGNAL_FFI_A): $(LIBSIGNAL_DIR)
 	@echo "[$(LIBSIGNAL_FFI_A)] ..."
-	cd $(LIBSIGNAL_DIR) && RUSTFLAGS="$(CARGO_RUSTFLAGS)" $(CARGO_BIN) build -p libsignal-ffi --release
+	cd $(LIBSIGNAL_DIR) && RUSTFLAGS="$(CARGO_RUSTFLAGS)" $(CARGO_BIN) build -p libsignal-ffi --release --features $(LIBSIGNAL_FEATURES)
 	@cp -v $(LIBSIGNAL_DIR)/target/release/libsignal_ffi.a $(LIBSIGNAL_FFI_A)
 
 #deps/libsignal/swift/Sources/SignalFfi/signal_ffi.h
 # doas sysctl hardening.harden_rtld=0
 # swift/build_ffi.sh --release --generate-ffi
 $(LIBSIGNAL_FFI_H): $(LIBSIGNAL_DIR)
-	#$(CBINDGEN_BIN)  --profile release --crate "$(LIBSIGNAL_DIR)"/rust/bridge/ffi --output $(LIBSIGNAL_FFI_H) --lang c
-	#$(CBINDGEN_BIN) --config $(CBINDGEN_CFG) --profile release "$(LIBSIGNAL_DIR)"/rust/bridge/ffi --output $(LIBSIGNAL_FFI_H) --lang c
-
-	#  libsignal/rust/bridge/ffi
-	#cd $(LIBSIGNAL_DIR)/rust/bridge/ffi && $(CBINDGEN_BIN) --config $(LIBSIGNAL_FFI_CBINDGEN) --profile release --output $(LIBSIGNAL_FFI_H) --lang c
 	@echo "[$(LIBSIGNAL_FFI_H)] ..."
 	cp -nv deps/libsignal/swift/Sources/SignalFfi/*.h deps/
 

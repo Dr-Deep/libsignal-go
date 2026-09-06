@@ -8,7 +8,7 @@ package ffi
 
 extern void goPromiseCompleteOwnedBuffer(SignalFfiError *err, const SignalOwnedBuffer *buf, const void *userData);
 
-static void promise_complete_owned_buffer_cgo(
+void promise_complete_owned_buffer_cgo(          // ← no "static"
     SignalFfiError *err,
     const SignalOwnedBuffer *buf,
     const void *userData
@@ -23,27 +23,28 @@ import (
 	"unsafe"
 )
 
-type result[T any] struct {
+type PromiseResult[T any] struct {
 	value T
 	err   error
 }
 
 type Promise[T any] struct {
-	channel   chan result[T]
+	channel   chan PromiseResult[T]
 	cancelID  uint64
 	tokioCtx  *TokioAsyncContext
-	handle    cgo.Handle // keeps alive across C callbacks
+	handle    cgo.Handle // keep alive across C callbacks
 	completed bool
 }
 
-// returns C context Pointer (SignalCPromise.context)
-func newPromise[T any](tokio *TokioAsyncContext) (*Promise[T], unsafe.Pointer) {
+// returns promise, C context Pointer (SignalCPromise.context)
+func NewPromise[T any](tokio *TokioAsyncContext) (*Promise[T], unsafe.Pointer) {
 	p := &Promise[T]{
-		channel:  make(chan result[T], 1),
+		channel:  make(chan PromiseResult[T], 1),
 		tokioCtx: tokio,
 	}
+
 	p.handle = cgo.NewHandle(p)
-	return p, unsafe.Pointer(p.handle)
+	return p, unsafe.Pointer(uintptr(p.handle)) //?
 }
 
 // called once from C
@@ -51,8 +52,9 @@ func (p *Promise[T]) complete(value T, err error) {
 	if p.completed {
 		return
 	}
+
 	p.completed = true
-	p.channel <- result[T]{value: value, err: err}
+	p.channel <- PromiseResult[T]{value: value, err: err}
 	close(p.channel)
 	p.handle.Delete()
 }

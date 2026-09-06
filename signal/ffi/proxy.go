@@ -12,9 +12,6 @@ import (
 )
 
 /*
-SignalFfiError* signal_connection_manager_clear_proxy(
-SignalFfiError* signal_connection_manager_set_invalid_proxy(
-SignalFfiError* signal_connection_manager_set_proxy(
 SignalFfiError* signal_connection_proxy_config_clone(
 SignalFfiError* signal_connection_proxy_config_destroy(
 SignalFfiError* signal_connection_proxy_config_new(
@@ -61,6 +58,7 @@ func NewConnectionProxyConfig(scheme, host, username, password string, port int3
 			(*C.int8_t)(unsafe.Pointer(c_pass)),
 		),
 	)
+
 	if err != nil {
 		return nil, err
 	}

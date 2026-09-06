@@ -11,6 +11,11 @@ import "unsafe"
 
 /*
  C.SignalMutPointerBridgedStringMap
+
+SignalFfiError* signal_bridged_string_map_clone(
+SignalFfiError* signal_bridged_string_map_destroy(
+SignalFfiError* signal_bridged_string_map_insert(
+SignalFfiError* signal_bridged_string_map_new(
 */
 
 type RemoteConfigMap struct {
